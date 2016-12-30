@@ -1,0 +1,161 @@
+ Linux网口绑定 
+
+ 通过网口绑定(bond)技术,可以很容易实现网口冗余，负载均衡，从而达到高可用高可靠的目的。前提约定：
+
+2个物理网口分别是：eth0,eth1
+
+绑定后的虚拟口是：bond0
+
+服务器IP是：192.168.0.100
+
+第一步，配置设定文件：
+
+/etc/sysconfig/network-scripts/ifcfg-bond0
+
+DEVICE=bond0
+
+BOOTPROTO=none
+
+ONBOOT=yes
+
+IPADDR=192.168.0.100
+
+NETMASK=255.255.255.0
+
+NETWORK=192.168.0.0
+
+BROADCAST=192.168.0.255
+
+#BROADCAST广播地址
+
+/etc/sysconfig/network-scripts/ifcfg-eth0
+
+DEVICE=eth0
+
+BOOTPROTO=none
+
+MASTER=bond0
+
+SLAVE=yes
+
+/etc/sysconfig/network-scripts/ifcfg-eth1
+
+DEVICE=eth1
+
+BOOTPROTO=none
+
+MASTER=bond0
+
+SLAVE=yes
+
+第二步，修改modprobe相关设定文件，并加载bonding模块：
+
+1.在这里，我们直接创建一个加载bonding的专属设定文件/etc/modprobe.d/bonding.conf
+
+[root@test ~]# vi /etc/modprobe.d/bonding.conf
+
+#追加
+
+alias bond0 bonding
+
+options bonding mode=0 miimon=200
+
+2.加载模块(重启系统后就不用手动再加载了)
+
+[root@test ~]# modprobe bonding
+
+3.确认模块是否加载成功：
+
+[root@test ~]# lsmod | grep bonding
+
+bonding 100065 0
+
+第三步，重启一下网络，然后确认一下状况：
+
+[root@test ~]# /etc/init.d/network restart
+
+[root@test ~]# cat /proc/net/bonding/bond0
+
+Ethernet Channel Bonding Driver: v3.5.0 (November 4, 2008)
+
+Bonding Mode: fault-tolerance (active-backup)
+
+Primary Slave: None
+
+Currently Active Slave: eth0
+
+……
+
+ [root@test ~]# ifconfig | grep HWaddr
+
+bond0 Link encap:Ethernet HWaddr 00:16:36:1B:BB:74
+
+eth0 Link encap:Ethernet HWaddr 00:16:36:1B:BB:74
+
+eth1 Link encap:Ethernet HWaddr 00:16:36:1B:BB:74
+
+从上面的确认信息中，我们可以看到3个重要信息：
+
+1.现在的bonding模式是active-backup
+
+2.现在Active状态的网口是eth0
+
+3.bond0,eth1的物理地址和处于active状态下的eth0的物理地址相同，这样是为了避免上位交换机发生混乱。
+
+任意拔掉一根网线，然后再访问你的服务器，看网络是否还是通的。
+
+第四步，系统启动自动绑定、增加默认网关：
+
+[root@test ~]# vi /etc/rc.d/rc.local
+
+#追加
+
+ifenslave bond0 eth0 eth1
+
+route add default gw 192.168.0.1
+
+#如可上网就不用增加路由，0.1地址按环境修改.
+
+------------------------------------------------------------------------
+
+留心：前面只是2个网口绑定成一个bond0的情况，如果我们要设置多个bond口，比如物理网口eth0和eth1组成bond0，eth2和eth3组成bond1，
+
+那么网口设置文件的设置方法和上面第1步讲的方法相同，只是/etc/modprobe.d/bonding.conf的设定就不能像下面这样简单的叠加了：
+
+alias bond0 bonding
+
+options bonding mode=1 miimon=200
+
+alias bond1 bonding
+
+options bonding mode=1 miimon=200
+
+正确的设置方法有2种：
+
+第一种,你可以看到，这种方式的话，多个bond口的模式就只能设成相同的了：
+
+alias bond0 bonding
+
+alias bond1 bonding
+
+options bonding max_bonds=2 miimon=200 mode=1
+
+第二种，这种方式，不同的bond口的mode可以设成不一样：
+
+alias bond0 bonding
+
+options bond0 miimon=100 mode=1
+
+install bond1 /sbin/modprobe bonding -o bond1 miimon=200 mode=0
+
+仔细看看上面这2种设置方法，现在如果是要设置3个，4个，甚至更多的bond口，你应该也会了吧！
+
+后记：简单的介绍一下上面在加载bonding模块的时候，options里的一些参数的含义：
+
+miimon 监视网络链接的频度，单位是毫秒，我们设置的是200毫秒。
+
+max_bonds 配置的bond口个数
+
+mode bond模式，主要有以下几种，在一般的实际应用中，0和1用的比较多，
+
+如果你要深入了解这些模式各自的特点就需要靠读者你自己去查资料并做实践了。 
