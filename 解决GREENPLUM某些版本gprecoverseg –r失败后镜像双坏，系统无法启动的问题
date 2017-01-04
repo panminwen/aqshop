@@ -1,0 +1,159 @@
+解决GREENPLUM某些版本gprecoverseg –r失败后镜像双坏，系统无法启动的问题
+
+ 开始之前，我先声明一点，参考这篇文章去操作数据库，造成丢失数据，搞瘫系统的可能性非常之高，初学者以及思路不清晰者，请关闭页面，不要再继续下去，经过一通乱搞以后，真的就没人能再帮得了你了。
+
+先说明一下故障的来由，由于系统的BUG某些版本的GREENPLUM只要执行了gprecoverseg -r，就一定会失败，而且一定会镜像双坏，无法启动。这里说明一下，这种版本的GP镜像反转时，只能重启数据库去自动修复，不可以使用gprecoverseg –r人工修复，切记。
+
+     值得庆幸的是，只要是进入到这种反转修复失败的情况，一般来说所有镜像一定是同步的，因为如果不同步的话会报另一个错误：有部分镜像失败，无法执行gprecoverseg -r，这种情况就不会出现我们本文讨论的问题。此时虽然我们无法启动整个数据库，但是事实上MIRROR是可以作为PRIMARY启动的，只是GREENPLUM把节点的状态搞乱了。我们只要把出现问题之前的描述节点状态的系统表gp_segment_configuration恢复到镜像反转的状态，就可以启动数据库了，当然只能是手动恢复。
+
+接下来我结合实际的数据介绍一下gp_segment_configuration 的表结构 
+
+postgres=# select * from gp_segment_configuration  where address like 'sdw10-%' or address like 'sdw11-%' order by dbid ;
+
+ dbid | content | role | preferred_role | mode | status | port  |  hostname   | address | replication_port | san_mounts
+
+------+---------+------+----------------+------+--------+-------+-------------+---------+------------------+------------
+
+   56 |      54 | p     | p              | c    | u      | 40000 | dssln-sdw10 | sdw10-1 |            41000 |
+
+   57 |      55 | p    | p              | c    | u      | 40001 | dssln-sdw10 | sdw10-1 |            41001 |
+
+   58 |      56 | p    | p              | c    | u      | 40002 | dssln-sdw10 | sdw10-1 |            41002 |
+
+   59 |      57 | p    | p              | c    | u      | 40003 | dssln-sdw10 | sdw10-2 |            41003 |
+
+   60 |      58 | p    | p              | c    | u      | 40004 | dssln-sdw10 | sdw10-2 |            41004 |
+
+   61 |      59 | p    | p              | c    | u      | 40005 | dssln-sdw10 | sdw10-2 |            41005 |
+
+   62 |      60 | p    | p              | s    | u      | 40000 | dssln-sdw11 | sdw11-1 |            41000 |
+
+   63 |      61 | p    | p              | s    | u      | 40001 | dssln-sdw11 | sdw11-1 |            41001 |
+
+   64 |      62 | p    | p              | s    | u      | 40002 | dssln-sdw11 | sdw11-1 |            41002 |
+
+   65 |      63 | p    | p              | s    | u      | 40003 | dssln-sdw11 | sdw11-2 |            41003 |
+
+   66 |      64 | p    | p              | s    | u      | 40004 | dssln-sdw11 | sdw11-2 |            41004 |
+
+   67 |      65 | p    | p              | s    | u      | 40005 | dssln-sdw11 | sdw11-2 |            41005 |
+
+  158 |      48 | m    | m              | s    | u      | 50000 | dssln-sdw10 | sdw10-2 |            51000 |
+
+  159 |      49 | m    | m              | s    | u      | 50001 | dssln-sdw10 | sdw10-2 |            51001 |
+
+  160 |      50 | m    | m              | s    | u      | 50002 | dssln-sdw10 | sdw10-2 |            51002 |
+
+  161 |      51 | m    | m              | s    | u      | 50003 | dssln-sdw10 | sdw10-1 |            51003 |
+
+  162 |      52 | m    | m              | s    | u      | 50004 | dssln-sdw10 | sdw10-1 |            51004 |
+
+  163 |      53 | m    | m              | s    | u      | 50005 | dssln-sdw10 | sdw10-1 |            51005 |
+
+  164 |      54 | m    | m              | c    | d      | 50000 | dssln-sdw11 | sdw11-2 |            51000 |
+
+  165 |      55 | m    | m              | c    | d      | 50001 | dssln-sdw11 | sdw11-2 |            51001 |
+
+  166 |      56 | m    | m              | c    | d      | 50002 | dssln-sdw11 | sdw11-2 |            51002 |
+
+  167 |      57 | m    | m              | c    | d      | 50003 | dssln-sdw11 | sdw11-1 |            51003 |
+
+  168 |      58 | m    | m              | c    | d      | 50004 | dssln-sdw11 | sdw11-1 |            51004 |
+
+  169 |      59 | m    | m              | c    | d      | 50005 | dssln-sdw11 | sdw11-1 |            51005 |
+
+ dbid | content | role | preferred_role | mode | status | port  |  hostname   | address | replication_port | san_mounts
+
+dbid 和content表示数据库的ID
+
+role 代表当前角色
+
+preferred_role 代表首选角色，也就是原本应该出演的角色
+
+mode='s/c/r'三个取值分别代表synced, change logging, resyncing
+
+status='u/d'两个取值分别代表up，down。
+
+其他字段不做解释了。
+
+上面这个样例数据表示11节点的6个镜像子库全部被标记为DOWN了，但是事实上里边的数据是完整的，10节点的6个主用子库镜像失败，可以启动，但是启动不起来，但事实上里边的数据也是完整的只是状态标记出现了问题。
+
+根据之前的分析，我们只要把这两个节点的镜像数据到反转状态就可以了。目标如下：
+
+postgres=# select * from gp_segment_configuration  where (address like 'sdw10-%' and preferred_role = ‘p’) or (address like 'sdw11-%'  and preferred_role = ‘m’) order by dbid ;
+
+ dbid | content | role | preferred_role | mode | status | port  |  hostname   | address | replication_port | san_mounts
+
+------+---------+------+----------------+------+--------+-------+-------------+---------+------------------+------------
+
+   56 |      54 | m     | p              | s    | u      | 40000 | dssln-sdw10 | sdw10-1 |            41000 |
+
+   57 |      55 | m    | p              | s    | u      | 40001 | dssln-sdw10 | sdw10-1 |            41001 |
+
+   58 |      56 | m    | p              | s    | u      | 40002 | dssln-sdw10 | sdw10-1 |            41002 |
+
+   59 |      57 | m    | p              | s    | u      | 40003 | dssln-sdw10 | sdw10-2 |            41003 |
+
+   60 |      58 | m    | p              | s    | u      | 40004 | dssln-sdw10 | sdw10-2 |            41004 |
+
+   61 |      59 | m    | p              | s    | u      | 40005 | dssln-sdw10 | sdw10-2 |            41005 |
+
+  164 |      54 | p    | m              | s    | u      | 50000 | dssln-sdw11 | sdw11-2 |            51000 |
+
+  165 |      55 | p    | m              | s    | u      | 50001 | dssln-sdw11 | sdw11-2 |            51001 |
+
+  166 |      56 | p    | m              | s    | u      | 50002 | dssln-sdw11 | sdw11-2 |            51002 |
+
+  167 |      57 | p    | m              | s    | u      | 50003 | dssln-sdw11 | sdw11-1 |            51003 |
+
+  168 |      58 | p    | m              | s    | u      | 50004 | dssln-sdw11 | sdw11-1 |            51004 |
+
+  169 |      59 | p    | m              | s    | u      | 50005 | dssln-sdw11 | sdw11-1 |            51005 |
+
+好我们正式开始：
+
+1、        启动到维护模式：
+
+gpstart –m
+
+以维护方式连接到数据库
+
+PGOPTIONS='-c gp_session_role=utility' psql -d postgres
+
+打开系统表的维护开关
+
+set allow_system_table_mods=DML;
+
+ 
+
+2、        备份系统表:
+
+create table mybak_segment_configuration as select * from gp_segment_configuration;
+
+3、        修改数据到镜像反转状态：
+
+update gp_segment_configuration set role='p',mode='s',status='u' where address like 'sdw11%' and preferred_role='m';
+
+update gp_segment_configuration set role='m',mode='s',status='u' where address like 'sdw10%' and preferred_role='p';
+
+\q
+
+4、        重启数据库
+
+gpstop –m –M fast
+
+gpstart
+
+5、        检查镜像，此时应该已经自动恢复到正常状态。
+
+gpstate –m
+
+6、        如果不同步就修一下
+
+gprecoverseg
+
+7、        如果镜像仍然反转就重新启动一下数据库。
+
+gpstop –M fast
+
+gpstart
