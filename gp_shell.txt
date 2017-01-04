@@ -1,0 +1,309 @@
+bash SqoopExport.sh /home/aisinobi/src/dreamTest.jar dw dw_agg_jxfx_wp dw_agg_jxfx_wp AISINO
+
+--bash SqoopExport.sh /home/aisinobi/src/dreamTest.jar dw dw_agg_jxfx_wp
+   hadoop fs -rm /user/hive/warehouse/exportGreenplum/dw_agg_jxfx_wp/*.parquet
+   bash sparksubmit.sh com.aisino.bi.util.ExportUtil /home/aisinobi/src/dreamTest.jar  dw dw_agg_jxfx_wp
+   sqoop export --connect jdbc:postgresql://192.168.201.80:2345/postgres --username gpadmin --password AISINO --export-dir /user/hive/warehouse/exportGreenplum/dw_agg_jxfx_wp  --input-fields-terminated-by '\001' --input-null-string '\\N' --input-null-non-string '\\N' --table dw_agg_jxfx_wp -m 10 -- --schema dw
+
+
+--bash SqoopExport.sh $1 dw dw_agg_xxfx_wp
+   hadoop fs -rm /user/hive/warehouse/exportGreenplum/dw_agg_xxfx_wp/*.parquet
+   bash sparksubmit.sh com.aisino.bi.util.ExportUtil /home/aisinobi/src/dreamTest.jar  dw dw_agg_xxfx_wp
+   sqoop export --connect jdbc:postgresql://192.168.201.80:2345/postgres --username gpadmin --password AISINO --export-dir /user/hive/warehouse/exportGreenplum/dw_agg_xxfx_wp  --input-fields-terminated-by '\001' --input-null-string '\\N' --input-null-non-string '\\N' --table dw_agg_xxfx_wp -m 10 -- --schema dw
+
+
+
+--bash SqoopExport.sh /home/aisinobi/src/dreamTest.jar dw dw_agg_jxfx_nsr
+   hadoop fs -rm /user/hive/warehouse/exportGreenplum/dw_agg_jxfx_nsr/*.parquet
+   bash sparksubmit.sh com.aisino.bi.util.ExportUtil /home/aisinobi/src/dreamTest.jar  dw dw_agg_jxfx_nsr
+   sqoop export --connect jdbc:postgresql://192.168.201.80:2345/postgres --username gpadmin --password AISINO --export-dir /user/hive/warehouse/exportGreenplum/dw_agg_jxfx_nsr  --input-fields-terminated-by '\001' --input-null-string '\\N' --input-null-non-string '\\N' --table dw_agg_jxfx_nsr -m 10 -- --schema dw
+
+
+
+
+
+--bash SqoopExport.sh $1 dw dw_agg_xxfx_nsr
+   hadoop fs -rm /user/hive/warehouse/exportGreenplum/dw_agg_xxfx_nsr/*.parquet
+   bash sparksubmit.sh com.aisino.bi.util.ExportUtil /home/aisinobi/src/dreamTest.jar  dw dw_agg_xxfx_nsr
+   sqoop export --connect jdbc:postgresql://192.168.201.80:2345/postgres --username gpadmin --password AISINO --export-dir /user/hive/warehouse/exportGreenplum/dw_agg_xxfx_nsr  --input-fields-terminated-by '\001' --input-null-string '\\N' --input-null-non-string '\\N' --table dw_agg_xxfx_nsr -m 10 -- --schema dw
+
+
+
+
+
+
+--bash SqoopExport.sh $1 dw dw_agg_jxfx_nsr_without_sl
+   hadoop fs -rm /user/hive/warehouse/exportGreenplum/dw_agg_jxfx_nsr_without_sl/*.parquet
+   bash sparksubmit.sh com.aisino.bi.util.ExportUtil /home/aisinobi/src/dreamTest.jar  dw dw_agg_jxfx_nsr_without_sl
+   sqoop export --connect jdbc:postgresql://192.168.201.80:2345/postgres --username gpadmin --password AISINO --export-dir /user/hive/warehouse/exportGreenplum/dw_agg_jxfx_nsr_without_sl  --input-fields-terminated-by '\001' --input-null-string '\\N' --input-null-non-string '\\N' --table dw_agg_jxfx_nsr_without_sl -m 10 -- --schema dw
+
+
+
+
+--bash SqoopExport.sh $1 dw dw_agg_xxfx_nsr_without_sl
+   hadoop fs -rm /user/hive/warehouse/exportGreenplum/dw_agg_xxfx_nsr_without_sl/*.parquet
+   bash sparksubmit.sh com.aisino.bi.util.ExportUtil /home/aisinobi/src/dreamTest.jar  dw dw_agg_xxfx_nsr_without_sl
+   sqoop export --connect jdbc:postgresql://192.168.201.80:2345/postgres --username gpadmin --password AISINO --export-dir /user/hive/warehouse/exportGreenplum/dw_agg_xxfx_nsr_without_sl  --input-fields-terminated-by '\001' --input-null-string '\\N' --input-null-non-string '\\N' --table dw_agg_xxfx_nsr_without_sl -m 10 -- --schema dw
+
+
+
+
+
+
+
+--bash SqoopExport.sh $1 dw dw_agg_jxfx_swjg
+   hadoop fs -rm /user/hive/warehouse/exportGreenplum/dw_agg_jxfx_swjg/*.parquet
+   bash sparksubmit.sh com.aisino.bi.util.ExportUtil /home/aisinobi/src/dreamTest.jar  dw dw_agg_jxfx_swjg
+   sqoop export --connect jdbc:postgresql://192.168.201.80:2345/postgres --username gpadmin --password AISINO --export-dir /user/hive/warehouse/exportGreenplum/dw_agg_jxfx_swjg  --input-fields-terminated-by '\001' --input-null-string '\\N' --input-null-non-string '\\N' --table dw_agg_jxfx_swjg -m 10 -- --schema dw
+
+
+
+
+--bash SqoopExport.sh /home/aisinobi/src/dreamTest.jar dw dw_agg_xxfx_swjg
+   hadoop fs -rm /user/hive/warehouse/exportGreenplum/dw_agg_xxfx_swjg/*.parquet
+   bash sparksubmit.sh com.aisino.bi.util.ExportUtil /home/aisinobi/src/dreamTest.jar  dw dw_agg_xxfx_swjg
+   sqoop export --connect jdbc:postgresql://192.168.201.80:2345/postgres --username gpadmin --password AISINO --export-dir /user/hive/warehouse/exportGreenplum/dw_agg_xxfx_swjg  --input-fields-terminated-by '\001' --input-null-string '\\N' --input-null-non-string '\\N' --table dw_agg_xxfx_swjg -m 10 -- --schema dw
+
+
+
+--bash SqoopExport.sh $1 dw dw_fact_jxfp  有问题多数据
+   hadoop fs -rm /user/hive/warehouse/exportGreenplum/dw_fact_jxfp/*.parquet
+   bash sparksubmit.sh com.aisino.bi.util.ExportUtil /home/aisinobi/src/dreamTest.jar  dw dw_fact_jxfp
+   sqoop export --connect jdbc:postgresql://192.168.201.80:2345/postgres --username gpadmin --password AISINO --export-dir /user/hive/warehouse/exportGreenplum/dw_fact_jxfp  --input-fields-terminated-by '\001' --input-null-string '\\N' --input-null-non-string '\\N' --table dw_fact_jxfp -m 10 -- --schema dw
+
+
+
+--bash SqoopExport.sh $1 dw dw_fact_xxfp
+   hadoop fs -rm /user/hive/warehouse/exportGreenplum/dw_fact_xxfp/*.parquet
+   bash sparksubmit.sh com.aisino.bi.util.ExportUtil /home/aisinobi/src/dreamTest.jar  dw dw_fact_xxfp
+   sqoop export --connect jdbc:postgresql://192.168.201.80:2345/postgres --username gpadmin --password AISINO --export-dir /user/hive/warehouse/exportGreenplum/dw_fact_xxfp  --input-fields-terminated-by '\001' --input-null-string '\\N' --input-null-non-string '\\N' --table dw_fact_xxfp -m 10 -- --schema dw
+
+
+
+--bash SqoopExport.sh $1 dw dw_fact_jxfpmx
+   hadoop fs -rm /user/hive/warehouse/exportGreenplum/dw_fact_jxfpmx/*.parquet
+   bash sparksubmit.sh com.aisino.bi.util.ExportUtil /home/aisinobi/src/dreamTest.jar  dw dw_fact_jxfpmx
+   sqoop export --connect jdbc:postgresql://192.168.201.80:2345/postgres --username gpadmin --password AISINO --export-dir /user/hive/warehouse/exportGreenplum/dw_fact_jxfpmx  --input-fields-terminated-by '\001' --input-null-string '\\N' --input-null-non-string '\\N' --table dw_fact_jxfpmx -m 10 -- --schema dw
+
+
+
+--bash SqoopExport.sh $1 dw dw_fact_xxfpmx 有问题数据多
+   hadoop fs -rm /user/hive/warehouse/exportGreenplum/dw_fact_xxfpmx/*.parquet
+   bash sparksubmit.sh com.aisino.bi.util.ExportUtil /home/aisinobi/src/dreamTest.jar  dw dw_fact_xxfpmx
+   sqoop export --connect jdbc:postgresql://192.168.201.80:2345/postgres --username gpadmin --password AISINO --export-dir /user/hive/warehouse/exportGreenplum/dw_fact_xxfpmx  --input-fields-terminated-by '\001' --input-null-string '\\N' --input-null-non-string '\\N' --table dw_fact_xxfpmx -m 10 -- --schema dw
+
+
+--bash SqoopExport.sh $1 dw dw_dim_swjg
+   hadoop fs -rm /user/hive/warehouse/exportGreenplum/dw_dim_swjg/*.parquet
+   bash sparksubmit.sh com.aisino.bi.util.ExportUtil /home/aisinobi/src/dreamTest.jar  dw dw_dim_swjg
+   sqoop export --connect jdbc:postgresql://192.168.201.80:2345/postgres --username gpadmin --password AISINO --export-dir /user/hive/warehouse/exportGreenplum/dw_dim_swjg  --input-fields-terminated-by '\001' --input-null-string '\\N' --input-null-non-string '\\N' --table dw_dim_swjg -m 10 -- --schema dw
+
+
+
+--bash SqoopExport.sh $1 dw dw_dim_swjg_jc
+   hadoop fs -rm /user/hive/warehouse/exportGreenplum/dw_dim_swjg_jc/*.parquet
+   bash sparksubmit.sh com.aisino.bi.util.ExportUtil /home/aisinobi/src/dreamTest.jar  dw dw_dim_swjg_jc
+   sqoop export --connect jdbc:postgresql://192.168.201.80:2345/postgres --username gpadmin --password AISINO --export-dir /user/hive/warehouse/exportGreenplum/dw_dim_swjg_jc  --input-fields-terminated-by '\001' --input-null-string '\\N' --input-null-non-string '\\N' --table dw_dim_swjg_jc -m 10 -- --schema dw
+
+
+
+--bash SqoopExport.sh $1 dw dw_dim_hy
+   hadoop fs -rm /user/hive/warehouse/exportGreenplum/dw_dim_hy/*.parquet
+   bash sparksubmit.sh com.aisino.bi.util.ExportUtil /home/aisinobi/src/dreamTest.jar  dw dw_dim_hy
+   sqoop export --connect jdbc:postgresql://192.168.201.80:2345/postgres --username gpadmin --password AISINO --export-dir /user/hive/warehouse/exportGreenplum/dw_dim_hy  --input-fields-terminated-by '\001' --input-null-string '\\N' --input-null-non-string '\\N' --table dw_dim_hy -m 10 -- --schema dw
+
+
+--bash SqoopExport.sh $1 dw dw_dim_date
+   hadoop fs -rm /user/hive/warehouse/exportGreenplum/dw_dim_date/*.parquet
+   bash sparksubmit.sh com.aisino.bi.util.ExportUtil /home/aisinobi/src/dreamTest.jar  dw dw_dim_date
+   sqoop export --connect jdbc:postgresql://192.168.201.80:2345/postgres --username gpadmin --password AISINO --export-dir /user/hive/warehouse/exportGreenplum/dw_dim_date  --input-fields-terminated-by '\001' --input-null-string '\\N' --input-null-non-string '\\N' --table dw_dim_date -m 10 -- --schema dw
+
+
+                                           
+--bash SqoopExport.sh $1 dw dw_yj_kjxhqdjk
+   hadoop fs -rm /user/hive/warehouse/exportGreenplum/dw_yj_kjxhqdjk/*.parquet
+   bash sparksubmit.sh com.aisino.bi.util.ExportUtil /home/aisinobi/src/dreamTest.jar  dw dw_yj_kjxhqdjk
+   sqoop export --connect jdbc:postgresql://192.168.201.80:2345/postgres --username gpadmin --password AISINO --export-dir /user/hive/warehouse/exportGreenplum/dw_yj_kjxhqdjk  --input-fields-terminated-by '\001' --input-null-string '\\N' --input-null-non-string '\\N' --table dw_yj_kjxhqdjk -m 10 -- --schema dw
+
+
+
+
+--bash SqoopExport.sh $1 dw dw_yj_xgm
+   hadoop fs -rm /user/hive/warehouse/exportGreenplum/dw_yj_xgm/*.parquet
+   bash sparksubmit.sh com.aisino.bi.util.ExportUtil /home/aisinobi/src/dreamTest.jar  dw dw_yj_xgm
+   sqoop export --connect jdbc:postgresql://192.168.201.80:2345/postgres --username gpadmin --password AISINO --export-dir /user/hive/warehouse/exportGreenplum/dw_yj_xgm  --input-fields-terminated-by '\001' --input-null-string '\\N' --input-null-non-string '\\N' --table dw_yj_xgm -m 10 -- --schema dw
+
+
+
+
+--bash SqoopExport.sh $1 dw dw_agg_jxxfx_nsrcy
+   hadoop fs -rm /user/hive/warehouse/exportGreenplum/dw_agg_jxxfx_nsrcy/*.parquet
+   bash sparksubmit.sh com.aisino.bi.util.ExportUtil /home/aisinobi/src/dreamTest.jar  dw dw_agg_jxxfx_nsrcy
+   sqoop export --connect jdbc:postgresql://192.168.201.80:2345/postgres --username gpadmin --password AISINO --export-dir /user/hive/warehouse/exportGreenplum/dw_agg_jxxfx_nsrcy  --input-fields-terminated-by '\001' --input-null-string '\\N' --input-null-non-string '\\N' --table dw_agg_jxxfx_nsrcy -m 10 -- --schema dw
+
+
+
+
+
+
+--bash SqoopExport.sh $1 dw dw_agg_nsr_dbkj
+   hadoop fs -rm /user/hive/warehouse/exportGreenplum/dw_agg_nsr_dbkj/*.parquet
+   bash sparksubmit.sh com.aisino.bi.util.ExportUtil /home/aisinobi/src/dreamTest.jar  dw dw_agg_nsr_dbkj
+   sqoop export --connect jdbc:postgresql://192.168.201.80:2345/postgres --username gpadmin --password AISINO --export-dir /user/hive/warehouse/exportGreenplum/dw_agg_nsr_dbkj  --input-fields-terminated-by '\001' --input-null-string '\\N' --input-null-non-string '\\N' --table dw_agg_nsr_dbkj -m 10 -- --schema dw
+
+
+
+bash SqoopExport.sh $1 dw dw_agg_nsr_dbkj_day_fp
+   hadoop fs -rm /user/hive/warehouse/exportGreenplum/dw_agg_nsr_dbkj_day_fp/*.parquet
+   bash sparksubmit.sh com.aisino.bi.util.ExportUtil /home/aisinobi/src/dreamTest.jar  dw dw_agg_nsr_dbkj_day_fp
+   sqoop export --connect jdbc:postgresql://192.168.201.80:2345/postgres --username gpadmin --password AISINO --export-dir /user/hive/warehouse/exportGreenplum/dw_agg_nsr_dbkj_day_fp  --input-fields-terminated-by '\001' --input-null-string '\\N' --input-null-non-string '\\N' --table dw_agg_nsr_dbkj_day_fp -m 10 -- --schema dw
+
+--bash SqoopExport.sh $1 dw dw_dim_nsr dw_dim_nsr
+   hadoop fs -rm /user/hive/warehouse/exportGreenplum/dw_dim_nsr/*.parquet
+   bash sparksubmit.sh com.aisino.bi.util.ExportUtil /home/aisinobi/src/dreamTest.jar  dw dw_dim_nsr
+   sqoop export --connect jdbc:postgresql://192.168.201.80:2345/postgres --username gpadmin --password AISINO --export-dir /user/hive/warehouse/exportGreenplum/dw_dim_nsr  --input-fields-terminated-by '\001' --input-null-string '\\N' --input-null-non-string '\\N' --table dw_dim_nsr -m 10 -- --schema dw
+
+
+--bash SqoopExport.sh $1 dw dw_dim_nsr dw_dim_nsr_temp
+   hadoop fs -rm /user/hive/warehouse/exportGreenplum/dw_dim_nsr_temp/*.parquet
+   bash sparksubmit.sh com.aisino.bi.util.ExportUtil /home/aisinobi/src/dreamTest.jar  dw dw_dim_nsr_temp
+   sqoop export --connect jdbc:postgresql://192.168.201.80:2345/postgres --username gpadmin --password AISINO --export-dir /user/hive/warehouse/exportGreenplum/dw_dim_nsr_temp  --input-fields-terminated-by '\001' --input-null-string '\\N' --input-null-non-string '\\N' --table dw_dim_nsr_temp -m 10 -- --schema dw
+
+
+--bash SqoopExport.sh $1 dw dw_agg_jxxfx_zxjc_nsrcy
+   hadoop fs -rm /user/hive/warehouse/exportGreenplum/dw_agg_jxxfx_zxjc_nsrcy/*.parquet
+   bash sparksubmit.sh com.aisino.bi.util.ExportUtil /home/aisinobi/src/dreamTest.jar  dw dw_agg_jxxfx_zxjc_nsrcy
+   sqoop export --connect jdbc:postgresql://192.168.201.80:2345/postgres --username gpadmin --password AISINO --export-dir /user/hive/warehouse/exportGreenplum/dw_agg_jxxfx_zxjc_nsrcy  --input-fields-terminated-by '\001' --input-null-string '\\N' --input-null-non-string '\\N' --table dw_agg_jxxfx_zxjc_nsrcy -m 10 -- --schema dw
+
+
+--bash SqoopExport.sh $1 dw dw_agg_jxfx_lyd_hy_sl
+   hadoop fs -rm /user/hive/warehouse/exportGreenplum/dw_agg_jxfx_lyd_hy_sl/*.parquet
+   bash sparksubmit.sh com.aisino.bi.util.ExportUtil /home/aisinobi/src/dreamTest.jar  dw dw_agg_jxfx_lyd_hy_sl
+   sqoop export --connect jdbc:postgresql://192.168.201.80:2345/postgres --username gpadmin --password AISINO --export-dir /user/hive/warehouse/exportGreenplum/dw_agg_jxfx_lyd_hy_sl  --input-fields-terminated-by '\001' --input-null-string '\\N' --input-null-non-string '\\N' --table dw_agg_jxfx_lyd_hy_sl -m 10 -- --schema dw
+
+
+--bash SqoopExport.sh $1 dw dw_agg_jxfx_lyd_zb
+   hadoop fs -rm /user/hive/warehouse/exportGreenplum/dw_agg_jxfx_lyd_zb/*.parquet
+   bash sparksubmit.sh com.aisino.bi.util.ExportUtil /home/aisinobi/src/dreamTest.jar  dw dw_agg_jxfx_lyd_zb
+   sqoop export --connect jdbc:postgresql://192.168.201.80:2345/postgres --username gpadmin --password AISINO --export-dir /user/hive/warehouse/exportGreenplum/dw_agg_jxfx_lyd_zb  --input-fields-terminated-by '\001' --input-null-string '\\N' --input-null-non-string '\\N' --table dw_agg_jxfx_lyd_zb -m 10 -- --schema dw
+
+
+
+--bash SqoopExport.sh $1 dw dw_agg_jxfx_nsr_sl
+   hadoop fs -rm /user/hive/warehouse/exportGreenplum/dw_agg_jxfx_nsr_sl/*.parquet
+   bash sparksubmit.sh com.aisino.bi.util.ExportUtil /home/aisinobi/src/dreamTest.jar  dw dw_agg_jxfx_nsr_sl
+   sqoop export --connect jdbc:postgresql://192.168.201.80:2345/postgres --username gpadmin --password AISINO --export-dir /user/hive/warehouse/exportGreenplum/dw_agg_jxfx_nsr_sl  --input-fields-terminated-by '\001' --input-null-string '\\N' --input-null-non-string '\\N' --table dw_agg_jxfx_nsr_sl -m 10 -- --schema dw
+
+--bash SqoopExport.sh $1 dw dw_agg_jxfx_swjg_hy
+   hadoop fs -rm /user/hive/warehouse/exportGreenplum/dw_agg_jxfx_swjg_hy/*.parquet
+   bash sparksubmit.sh com.aisino.bi.util.ExportUtil /home/aisinobi/src/dreamTest.jar  dw dw_agg_jxfx_swjg_hy
+   sqoop export --connect jdbc:postgresql://192.168.201.80:2345/postgres --username gpadmin --password AISINO --export-dir /user/hive/warehouse/exportGreenplum/dw_agg_jxfx_swjg_hy  --input-fields-terminated-by '\001' --input-null-string '\\N' --input-null-non-string '\\N' --table dw_agg_jxfx_swjg_hy -m 10 -- --schema dw
+
+
+
+
+--bash SqoopExport.sh $1 dw dw_agg_jxfx_swjg_zb
+   hadoop fs -rm /user/hive/warehouse/exportGreenplum/dw_agg_jxfx_swjg_zb/*.parquet
+   bash sparksubmit.sh com.aisino.bi.util.ExportUtil /home/aisinobi/src/dreamTest.jar  dw dw_agg_jxfx_swjg_zb
+   sqoop export --connect jdbc:postgresql://192.168.201.80:2345/postgres --username gpadmin --password AISINO --export-dir /user/hive/warehouse/exportGreenplum/dw_agg_jxfx_swjg_zb  --input-fields-terminated-by '\001' --input-null-string '\\N' --input-null-non-string '\\N' --table dw_agg_jxfx_swjg_zb -m 10 -- --schema dw
+
+
+
+
+
+--bash SqoopExport.sh $1 dw dw_agg_xxfx_lyd_hy_sl
+   hadoop fs -rm /user/hive/warehouse/exportGreenplum/dw_agg_xxfx_lyd_hy_sl/*.parquet
+   bash sparksubmit.sh com.aisino.bi.util.ExportUtil /home/aisinobi/src/dreamTest.jar  dw dw_agg_xxfx_lyd_hy_sl
+   sqoop export --connect jdbc:postgresql://192.168.201.80:2345/postgres --username gpadmin --password AISINO --export-dir /user/hive/warehouse/exportGreenplum/dw_agg_xxfx_lyd_hy_sl  --input-fields-terminated-by '\001' --input-null-string '\\N' --input-null-non-string '\\N' --table dw_agg_xxfx_lyd_hy_sl -m 10 -- --schema dw
+
+
+
+
+
+
+--bash SqoopExport.sh $1 dw dw_agg_xxfx_lyd_zb
+   hadoop fs -rm /user/hive/warehouse/exportGreenplum/dw_agg_xxfx_lyd_zb/*.parquet
+   bash sparksubmit.sh com.aisino.bi.util.ExportUtil /home/aisinobi/src/dreamTest.jar  dw dw_agg_xxfx_lyd_zb
+   sqoop export --connect jdbc:postgresql://192.168.201.80:2345/postgres --username gpadmin --password AISINO --export-dir /user/hive/warehouse/exportGreenplum/dw_agg_xxfx_lyd_zb  --input-fields-terminated-by '\001' --input-null-string '\\N' --input-null-non-string '\\N' --table dw_agg_xxfx_lyd_zb -m 10 -- --schema dw
+
+
+
+
+
+
+--bash SqoopExport.sh $1 dw dw_agg_xxfx_nsr_sl
+   hadoop fs -rm /user/hive/warehouse/exportGreenplum/dw_agg_xxfx_nsr_sl/*.parquet
+   bash sparksubmit.sh com.aisino.bi.util.ExportUtil /home/aisinobi/src/dreamTest.jar  dw dw_agg_xxfx_nsr_sl
+   sqoop export --connect jdbc:postgresql://192.168.201.80:2345/postgres --username gpadmin --password AISINO --export-dir /user/hive/warehouse/exportGreenplum/dw_agg_xxfx_nsr_sl  --input-fields-terminated-by '\001' --input-null-string '\\N' --input-null-non-string '\\N' --table dw_agg_xxfx_nsr_sl -m 10 -- --schema dw
+
+
+--bash SqoopExport.sh $1 dw dw_agg_xxfx_swjg_hy
+   hadoop fs -rm /user/hive/warehouse/exportGreenplum/dw_agg_xxfx_swjg_hy/*.parquet
+   bash sparksubmit.sh com.aisino.bi.util.ExportUtil /home/aisinobi/src/dreamTest.jar  dw dw_agg_xxfx_swjg_hy
+   sqoop export --connect jdbc:postgresql://192.168.201.80:2345/postgres --username gpadmin --password AISINO --export-dir /user/hive/warehouse/exportGreenplum/dw_agg_xxfx_swjg_hy  --input-fields-terminated-by '\001' --input-null-string '\\N' --input-null-non-string '\\N' --table dw_agg_xxfx_swjg_hy -m 10 -- --schema dw
+
+
+
+
+
+--bash SqoopExport.sh $1 dw dw_agg_xxfx_swjg_zb
+   hadoop fs -rm /user/hive/warehouse/exportGreenplum/dw_agg_xxfx_swjg_zb/*.parquet
+   bash sparksubmit.sh com.aisino.bi.util.ExportUtil /home/aisinobi/src/dreamTest.jar  dw dw_agg_xxfx_swjg_zb
+   sqoop export --connect jdbc:postgresql://192.168.201.80:2345/postgres --username gpadmin --password AISINO --export-dir /user/hive/warehouse/exportGreenplum/dw_agg_xxfx_swjg_zb  --input-fields-terminated-by '\001' --input-null-string '\\N' --input-null-non-string '\\N' --table dw_agg_xxfx_swjg_zb -m 10 -- --schema dw
+
+
+
+
+
+
+
+
+
+--没用到表
+bash SqoopExport.sh $1 dw dw_dm_nsr_bq;
+bash SqoopExport.sh $1 dw dw_dim_nsr_bq_type;
+bash SqoopExport.sh $1 dw dw_agg_hy_nsr;
+bash SqoopExport.sh $1 dw dw_agg_hy;
+bash SqoopExport.sh $1 dw dw_agg_nsr_sxygx;
+
+
+--GP 动态设置配置
+gpconfig -r  gp_vmem_protect_limit  10000MB
+
+--GP CHECK 硬件环境
+gpcheckperf -f /home/gpadmin/conf/hostlist -d /data –v
+
+
+
+--GP 恢复数据
+gprecoverseg -F -v
+
+--GP 初始化数据库
+gpinitsystem -c /home/gpadmin/conf/gpinitsystem_config
+
+--G P 创建SCHEMA
+CREATE SCHEMA dw
+  AUTHORIZATION gpadmin;
+
+--GP 付权限
+GRANT ALL ON SCHEMA dw TO gpadmin;
+GRANT ALL ON SCHEMA dw TO public;
+
+
+--GP 创建用户
+create user dw;
+
+--GP 修改密码
+alter role gpadmin with password 'AIGINO';
+
+alter role dw with password 'AIGINO';
+
+--GP 付权限
+GRANT gpadmin TO dw;
+
+
+gpcheck -f /home/gpadmin/conf/hostlist -m greenplum.localdomain -s greenplum.localdoamin
+
+
+
+
