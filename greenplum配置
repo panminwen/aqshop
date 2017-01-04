@@ -1,0 +1,34 @@
+
+--GP 动态设置配置
+gpconfig -r  gp_vmem_protect_limit  10000MB
+
+--GP CHECK 硬件环境
+gpcheckperf -f /home/gpadmin/conf/hostlist -d /data –v
+
+
+
+--GP 恢复数据
+gprecoverseg -F -v
+
+--GP 初始化数据库
+gpinitsystem -c /home/gpadmin/conf/gpinitsystem_config
+
+--G P 创建SCHEMA
+CREATE SCHEMA dw
+  AUTHORIZATION gpadmin;
+
+--GP 付权限
+GRANT ALL ON SCHEMA dw TO gpadmin;
+GRANT ALL ON SCHEMA dw TO public;
+
+
+--GP 创建用户
+create user dw;
+
+--GP 修改密码
+alter role gpadmin with password 'AIGINO';
+
+alter role dw with password 'AIGINO';
+
+--GP 付权限
+GRANT gpadmin TO dw;
