@@ -1,0 +1,84 @@
+安装及部署openTSDB
+
+
+环境：CentOS 6.5 with CDH5
+
+
+1.安装gnuplot
+Opentsdb依赖Gnuplot，它 是一个命令行的交互式绘图工具。用户通过输入命令，可以逐步设置或修改绘图环境，并以图形描述数据或函数，使我们可以借由图形做更进一步的分析。 
+# yum install gnuplot
+
+    采用rpm包来安装，省时省力。如果按照官网上的源码安装，需要设置好java相关的环境变量，另外在安装过程中安装脚本还要下载很多其他依赖包来编译。
+
+2.wget -c https://github.com/OpenTSDB/opentsdb/releases/download/v2.2.0RC1/opentsdb-2.2.0RC1.noarch.rpm  
+rpm -ivh opentsdb-2.2.0RC1.noarch.rpm  
+
+3. 创建表
+
+env COMPRESSION=NONE HBASE_HOME=/opt/cloudera/parcels/CDH /usr/share/opentsdb/tools/create_table.sh  
+
+4. 配置
+
+# vim /etc/opentsdb/opentsdb.conf
+# 注意以下几项，根据实际情况修改，其他配置可以保持默认
+tsd.network.port = 4242  
+tsd.storage.hbase.zk_basedir = /hbase  
+tsd.storage.hbase.zk_quorum = localhost  
+
+5.需要稍微修改下启动脚本，vim /usr/bin/tsdb， 在开头加入一行，指定本机的JAVA安装根路径，同时修改最后一行：  
+
+JAVA_HOME='/usr/local/jdk1.7.0_55'  // 开头
+
+exec "$JAVA_HOME/bin/Java" $JVMARGS -classpath "$CLASSPATH" net.opentsdb.tools.$MAINCLASS "$@"   // 最后一行
+
+ 最后，就可以启动OpenTSDB了，命令行下执行 service opentsdb start(停止位 service opentsdb stop)，注意观察日志下面是否有错误信息
+
+/var/log/opentsdb  err日志应该没有才行
+
+6. 启动
+
+/etc/init.d/opentsdb start  或者service opentsdb start
+
+    日志
+
+/var/log/opentsdb/opentsdb.log
+
+* 登录页面
+
+http://192.168.200.131:4242  
+
+
+
+JAVA_HOME='/usr/local/jdk1.7.0_79'
+
+
+
+cat >loadavg-collector.sh <<\EOF
+#!/bin/bash
+set -e
+while true; do
+  awk -v now=`date +%s` -v host=`hostname` \
+  '{ print "put proc.loadavg.1m " now " " $1 " host=" host;
+     print "put proc.loadavg.5m " now " " $2 " host=" host }' 
+ /proc/loadavg  sleep 15 done | nc -w 30 192.168.200.131 4242
+EOF
+chmod +x loadavg-collector.sh
+nohup ./loadavg-collector.sh &
+
+
+
+gnuplot 报错
+Could not find/open font when opening font "arial", using internal non-scalable font
+
+原因
+缺少“arial”的字体支持，需要安装windows通用字体
+
+安装
+rpm -ivh msttcore-fonts-2.0-3.noarch.rpm 
+
+
+设置环境变量
+
+
+export GDFONTPATH=/usr/share/fonts/msttcore
+export GNUPLOT_DEFAULT_GDFONT=arial
