@@ -1,0 +1,50 @@
+安装nginx 依赖:
+openssl
+zlib
+pcre
+ngix
+
+1.安装openssl
+./config
+make
+make install
+
+
+2.安装zlib
+./configure 
+make
+make install
+
+
+3.安装pcre
+ ./configure 
+make
+make install
+
+4.安装nginx
+./configure --with-pcre=/home/pcre2-10.21/ --with-zlib=/home/zlib-1.2.10/ --with-openssl=/home/openssl-master/
+make
+make install
+
+
+如果nginx 加入pcre库时编译错误，解决方法:
+yum -y install pcre-devel
+
+./configure  --with-zlib=/home/zlib-1.2.10/ --with-openssl=/home/openssl-master/
+make
+make install
+
+
+5.监测Nginx是否安装成功
+cd /usr/local/nginx/sbin/
+./nginx -t
+
+6.Nginx启动及看端口
+ ./nginx
+ netstat -ntlp  Nginx默认端口为80
+
+ 关闭nginx 
+ ./nginx -s stop
+
+ 访问
+ http://192.168.200.132/
