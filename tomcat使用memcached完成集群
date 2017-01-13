@@ -1,0 +1,184 @@
+ tomcat使用memcached完成集群（session共享实现方式） 
+
+  一.安装memcached
+
+    1.windows下安装memcached
+
+        需要到一个网站下载memcached的for win 32版本.在memcached的官方网站我是找不到的.我看了下,提供win版下载的是一个个人网站,老外的.应该是他自己用src编译的.
+
+        下载到只有几十K大小(我也吓了跳,还以为是病毒).安装后确实能用.我尝试在本帖提供附件下载.
+
+        下载后输入命令安装命令:
+
+        c:\memcached\memcached.exe -d install
+
+        然后再输入如下命令把其作为win service常驻启动:
+
+        c:\memcached\memcached.exe -d start
+
+        其他详细的并没做了,因为部署在win上只是暂时开发测试用的,最终会部署在Linux版本上.
+
+    2.linux下安装memcached
+
+        1.下载包
+
+        1.1.到http://memcached.org/下载linux下的memcached的安装包.
+
+        1.2.到http://libevent.org/ 下载安装memcached前比需要的包libevent-2.0.15 我安装的是这个版本.
+
+        2.安装libevent-2.0.15
+
+        # tar zxvf libevent-2.0.5-beta.tar.gz
+        # cd libevent-2.0.5
+        # ./configure –prefix=/usr
+        # make
+        # make install
+
+        如果中间出现报错，请仔细检查错误信息，按照错误信息来配置或者增加相应的库或者路径。(网上照搬.中间我只是出现过没有GCC的情况)
+
+        3.安装memcached
+        tar zxvf memcached-1.4.2.tar.gz
+
+          cd memcached-1.4.2
+
+          ./configure  --with-libevent=/usr
+
+          make
+
+          make install
+        如果中间出现报错，请仔细检查错误信息，按照错误信息来配置或者增加相应的库或者路径。
+        安装完成后会把memcached放到 /usr/local/bin/memcached ，
+
+        4.测试是否成功安装memcached：
+        # ls -al /usr/local/bin/mem*
+
+        成功的话，会输出一些相关信息。 
+
+
+        5.启动memcached
+
+        网上有一个命令很长的方法,可以我启动后进程是出现了,但就是不监听11211的端口.继续寻找终于找到一个可行的了.2个命令如下:
+
+        5.1我使用的,可行的命令
+
+        memcached -d -m 128 -l localhost -p 11211 -u root  (其中Localhost是指监听本机器的端口.)
+
+        5.2网上很多,但我使用却失败的命令
+
+        /usr/local/bin/memcached -d -m 10 -u root -l localhost -p 12000 -c 256 -P /tmp/memcached.pid
+
+
+        6.给出memcached启动命令参数详解.
+
+        -d选项是启动一个守护进程，
+
+        -m是分配给Memcache使用的内存数量，单位是MB，我这里是10MB，
+
+        -u是运行Memcache的用户，我这里是root，
+
+        -l是监听的服务器IP地址，如果有多个地址的话，我这里指定了服务器的IP地址192.168.0.200，
+
+        -p是设置Memcache监听的端口，我这里设置了12000，最好是1024以上的端口，
+
+        -c选项是最大运行的并发连接数，默认是1024，我这里设置了256，按照你服务器的负载量来设定，
+
+        -P是设置保存Memcache的pid文件，我这里是保存在 /tmp/memcached.pid，
+
+        -p 使用的TCP端口。默认为11211
+
+        -m 最大内存大小。默认为64M
+
+        -vv 用very vrebose模式启动，调试信息和错误输出到控制台
+
+        -d 作为daemon在后台启动
+
+        如果要结束Memcache进程，执行：
+
+        # kill `cat /tmp/memcached.pid`
+
+        或是 通过ps -ef | grep memcached 找到pid ，然后kill
+
+        也可以启动多个守护进程，不过端口不能重复。
+
+        # ps -ef | grep memcached
+
+        root 28914 1 0 07:27 ? 00:00:00 memcached -d -m 128 -l localhost -p 11211 -u root (启动ok)
+
+        6.测试memcached
+
+        #telnet localhost 11211
+
+        Trying 127.0.0.1...
+
+        Connected to localhost.localdomain (127.0.0.1).
+
+
+
+二.调用的包
+
+    可从http://code.google.com/p/memcached-session-manager/downloads/list下载所需要的包.
+
+    需要注意的是,你只能从该网站下载到 memcached-session-manager-1.5.1.jar  /  memcached-session-manager-tc6-1.5.1.jar  /  msm-javolution-serializer-1.5.1.jar
+
+    这3个包,还有2个包分别是 : memcached-2.5.jar  /  javolution-5.5.1.jar这2个包,需要自己另外下载哦.
+
+    都是放到tomcat/lib下.
+
+
+三.环境
+
+    本人使用的是tomcat6 + memcached-session-manager,首先是在windows下测试的.以后将部署在Linux环境下
+
+
+四.TOMCAT配置
+
+    网上有好多的版本,甚至在memcached-session-manager的wiki中都是在tomcat的conf/context.xml下配置.
+
+    但本人是在server.xml中配置到需要session共享的host中.配置见如下:
+
+
+    如果是一个memcached，采用如下配置：
+
+    [html] view plain copy
+
+        <Context reloadable="false" path="" >   
+                         <Manager className="de.javakaffee.web.msm.MemcachedBackupSessionManager"  
+                            memcachedNodes="n1:192.168.1.101:11211"  
+                            sticky="false"  
+                            sessionBackupAsync="false"  
+                            lockingMode="auto"  
+                            requestUriIgnorePattern=".*\.(ico|png|gif|jpg|css|js)$"  
+                            transcoderFactoryClass="de.javakaffee.web.msm.JavaSerializationTranscoderFactory"  
+                            />  
+                    </Context>  
+
+
+    如果是多个memcached，采用如下配置：
+
+    [html] view plain copy
+
+        <Context reloadable="false" path="" >   
+                         <Manager className="de.javakaffee.web.msm.MemcachedBackupSessionManager"  
+                            memcachedNodes="n1:192.168.1.101:11211,n2:192.168.1.102:11211"  
+                            sticky="false"  
+                            sessionBackupAsync="false"  
+                            lockingMode="auto"  
+                            requestUriIgnorePattern=".*\.(ico|png|gif|jpg|css|js)$"  
+                            transcoderFactoryClass="de.javakaffee.web.msm.JavaSerializationTranscoderFactory"  
+                            />  
+                    </Context>  
+
+    .
+
+    de.javakaffee.web.msm.serializer.kryo.KryoTranscoderFactory采用的序列化方式是kryo，根据官方提供的数据，这个的序列化效率是最好的，我下面有一些简单的测试。
+
+    感觉kryo的效率主要体现在高并发下面。如果非高并发感觉跟java的自带io差不多。如果不使用kryo进行序列化，采用java默认方式的话，请将transcoderFactoryClass改为：de.javakaffee.web.msm.JavaSerializationTranscoderFactory
+
+    另外在使用kryo进行序列话的时候，有时候会报序列话错误。具体解决方式，查看一篇博文：http://hi.baidu.com/drnadmhzfnacefe/item/87cead68940ef408a1cf0fa2。
+
+    五.测试结果
+
+    无论你从哪个tomcat浏览该jsp的打印信息(只要不关浏览器或者浏览器的标签),获得的session id都是一样的,证明是同一个session,并且共享了.
+
+
+    然后启动你的多个测试tomcat吧...关于memcached的安装.本文不提供.但会另外写文章叙述.
